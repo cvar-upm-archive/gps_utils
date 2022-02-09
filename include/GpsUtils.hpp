@@ -1,3 +1,14 @@
+/**
+ * @file GpsUtils.hpp
+ * @author Pedro Arias Perez
+ * @brief Geodesic to Cartesian conversions
+ * @version 0.1
+ * @date 2022-02-09
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
 #pragma once
 
 #include <GeographicLib/LocalCartesian.hpp>
