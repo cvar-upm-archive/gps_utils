@@ -21,10 +21,10 @@ class GpsUtils: private GeographicLib::LocalCartesian
 {
 private:
     std::string frame = "wgs84";
+    bool isOriginSet = false;
 public:
     GpsUtils(): GeographicLib::LocalCartesian(earth) {};
-    GpsUtils(double lat0, double lon0): GeographicLib::LocalCartesian(lat0, lon0, 0, earth) {};
-    GpsUtils(double lat0, double lon0, double h0): GeographicLib::LocalCartesian(lat0, lon0, h0, earth) {};
+    GpsUtils(double lat0, double lon0, double h0 = 0): GeographicLib::LocalCartesian(lat0, lon0, h0, earth) { this->isOriginSet = true; };
 
     // Geodesic Lat Lon to Local Cartesian 
     void LatLon2Local(double lat, double lon, double h, double &rX, double &rY, double &rZ);
@@ -35,8 +35,7 @@ public:
     void Local2LatLon(geometry_msgs::msg::PoseStamped ps, double &rLat, double &rLon, double &rH);
 
     // Origin 
-    void SetOrigin(double lat0, double lon0);
-    void SetOrigin(double lat0, double lon0, double h0);
+    void SetOrigin(double lat0, double lon0, double h0 = 0);
     void SetOrigin(sensor_msgs::msg::NavSatFix fix);
     void GetOrigin(double &rLat, double &rLon, double &rH);
 
@@ -48,3 +47,15 @@ public:
     void Ecef2LatLon(double x, double y, double z, double &rLat, double &rLon, double &rH);
     void Ecef2LatLon(geometry_msgs::msg::PoseStamped ps, double &rLat, double &rLon, double &rH);
 };  // GpsUtils
+
+class OriginNonSet : public std::runtime_error
+{
+public:
+    OriginNonSet(): std::runtime_error("origin is not set") {}
+};
+
+class OriginAlreadySet : public std::runtime_error
+{
+public:
+    OriginAlreadySet(): std::runtime_error("origin can only be set once") {}
+};
