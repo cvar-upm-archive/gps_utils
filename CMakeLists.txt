@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-set(PROJECT_NAME latlon2utm)
+set(PROJECT_NAME gps_utils)
 project(${PROJECT_NAME})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
@@ -62,16 +62,3 @@ install(TARGETS
 # endif()
 
 ament_package()
-
-
-# add_executable(latlon2utm ${SOURCE_FILES})
-# target_link_libraries (latlon2utm ${GeographicLib_LIBRARIES})
-# target_link_libraries (latlon2utm ${geometry_msgs_LIBRARIES})
-# target_link_libraries (latlon2utm ${sensor_msgs_LIBRARIES})
-
-add_executable(other src/other.cpp)
-
-add_executable(tests src/tests.cpp)
-target_link_libraries (tests ${GeographicLib_LIBRARIES})
-
-# https://stackoverflow.com/questions/48169653/finding-geographiclib-in-cmake-on-debian
