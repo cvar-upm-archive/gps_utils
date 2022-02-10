@@ -16,11 +16,12 @@
 #include "geometry_msgs/msg/pose_stamped.hpp"
 
 const static GeographicLib::Geocentric &earth = GeographicLib::Geocentric::WGS84();
+const static std::string globalFrame = "earth";  // wgs84 --> ROS REP105 Name Convention
 
 class GpsUtils: private GeographicLib::LocalCartesian
 {
 private:
-    std::string frame = "wgs84";
+    const std::string locaFrame = "map";  // local world fixed --> ROS REP105 Name Convention
     bool isOriginSet = false;
 public:
     GpsUtils(): GeographicLib::LocalCartesian(earth) {};
@@ -40,12 +41,12 @@ public:
     void GetOrigin(double &rLat, double &rLon, double &rH);
 
     // Geodesic Lat Lon to Earth-Centered-Earth-Fixed
-    void LatLon2Ecef(double lat, double lon, double h, double &rX, double &rY, double &rZ);
-    void LatLon2Ecef(sensor_msgs::msg::NavSatFix fix, double &rX, double &rY, double &rZ);
-    void LatLon2Ecef(double lat, double lon, double h, geometry_msgs::msg::PoseStamped &ps);
-    void LatLon2Ecef(sensor_msgs::msg::NavSatFix fix, geometry_msgs::msg::PoseStamped &ps);
-    void Ecef2LatLon(double x, double y, double z, double &rLat, double &rLon, double &rH);
-    void Ecef2LatLon(geometry_msgs::msg::PoseStamped ps, double &rLat, double &rLon, double &rH);
+    static void LatLon2Ecef(double lat, double lon, double h, double &rX, double &rY, double &rZ);
+    static void LatLon2Ecef(sensor_msgs::msg::NavSatFix fix, double &rX, double &rY, double &rZ);
+    static void LatLon2Ecef(double lat, double lon, double h, geometry_msgs::msg::PoseStamped &ps);
+    static void LatLon2Ecef(sensor_msgs::msg::NavSatFix fix, geometry_msgs::msg::PoseStamped &ps);
+    static void Ecef2LatLon(double x, double y, double z, double &rLat, double &rLon, double &rH);
+    static void Ecef2LatLon(geometry_msgs::msg::PoseStamped ps, double &rLat, double &rLon, double &rH);
 };  // GpsUtils
 
 class OriginNonSet : public std::runtime_error

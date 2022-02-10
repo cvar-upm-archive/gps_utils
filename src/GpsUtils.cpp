@@ -15,7 +15,7 @@ void GpsUtils::LatLon2Local(double lat, double lon, double h, geometry_msgs::msg
     double x, y, z;
     this->LatLon2Local(lat, lon, h, x, y, z);
     // ps.header.stamp = 0;
-    ps.header.frame_id = this->frame;
+    ps.header.frame_id = this->locaFrame;
     ps.pose.position.x = x;
     ps.pose.position.y = y;
     ps.pose.position.z = z;
@@ -59,21 +59,21 @@ void GpsUtils::LatLon2Ecef(double lat, double lon, double h, double &rX, double 
 }
 
 void GpsUtils::LatLon2Ecef(sensor_msgs::msg::NavSatFix fix, double &rX, double &rY, double &rZ) {
-    this->LatLon2Ecef(fix.latitude, fix.longitude, fix.altitude, rX, rY, rZ);
+    GpsUtils::LatLon2Ecef(fix.latitude, fix.longitude, fix.altitude, rX, rY, rZ);
 }
 
 void GpsUtils::LatLon2Ecef(double lat, double lon, double h, geometry_msgs::msg::PoseStamped &ps){    
     double x, y, z;
-    this->LatLon2Ecef(lat, lon, h, x, y, z);
+    GpsUtils::LatLon2Ecef(lat, lon, h, x, y, z);
     // ps.header.stamp = 0;
-    ps.header.frame_id = this->frame;
+    ps.header.frame_id = globalFrame;
     ps.pose.position.x = x;
     ps.pose.position.y = y;
     ps.pose.position.z = z;
 }
 
 void GpsUtils::LatLon2Ecef(sensor_msgs::msg::NavSatFix fix, geometry_msgs::msg::PoseStamped &ps) {
-    this->LatLon2Ecef(fix.latitude, fix.longitude, fix.altitude, ps);
+    GpsUtils::LatLon2Ecef(fix.latitude, fix.longitude, fix.altitude, ps);
 }
 
 void GpsUtils::Ecef2LatLon(double x, double y, double z, double &rLat, double &rLon, double &rH) {
@@ -81,5 +81,5 @@ void GpsUtils::Ecef2LatLon(double x, double y, double z, double &rLat, double &r
 }
 
 void GpsUtils::Ecef2LatLon(geometry_msgs::msg::PoseStamped ps, double &rLat, double &rLon, double &rH) {
-    this->Ecef2LatLon(ps.pose.position.x, ps.pose.position.y, ps.pose.position.z, rLat, rLon, rH);
+    GpsUtils::Ecef2LatLon(ps.pose.position.x, ps.pose.position.y, ps.pose.position.z, rLat, rLon, rH);
 }
