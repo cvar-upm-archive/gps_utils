@@ -21,7 +21,7 @@ const static std::string globalFrame = "earth";  // wgs84 --> ROS REP105 Name Co
 class GpsUtils: private GeographicLib::LocalCartesian
 {
 private:
-    const std::string locaFrame = "map";  // local world fixed --> ROS REP105 Name Convention
+    const std::string localFrame = "map";  // local world fixed --> ROS REP105 Name Convention
     bool isOriginSet = false;
 public:
     GpsUtils(): GeographicLib::LocalCartesian(earth) {};

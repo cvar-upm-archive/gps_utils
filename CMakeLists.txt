@@ -14,6 +14,7 @@ endif()
 set(PROJECT_DEPENDENCIES
   ament_cmake
   rclcpp
+  as2_core
   sensor_msgs
   geometry_msgs
   GeographicLib
@@ -49,6 +50,9 @@ ament_export_dependencies(${PROJECT_DEPENDENCIES})
 ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME})
 
+# TEMPORAL
+add_executable(gps_translator src/GpsTranslator.cpp ${SOURCE_CPP_FILES})
+ament_target_dependencies(gps_translator ${PROJECT_DEPENDENCIES})
 
 add_executable(${PROJECT_NAME}_main src/main.cpp ${SOURCE_CPP_FILES})
 ament_target_dependencies(${PROJECT_NAME}_main ${PROJECT_DEPENDENCIES})

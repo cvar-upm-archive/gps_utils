@@ -15,7 +15,7 @@ void GpsUtils::LatLon2Local(double lat, double lon, double h, geometry_msgs::msg
     double x, y, z;
     this->LatLon2Local(lat, lon, h, x, y, z);
     // ps.header.stamp = 0;
-    ps.header.frame_id = this->locaFrame;
+    ps.header.frame_id = this->localFrame;
     ps.pose.position.x = x;
     ps.pose.position.y = y;
     ps.pose.position.z = z;
