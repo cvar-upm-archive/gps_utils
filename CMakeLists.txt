@@ -50,13 +50,8 @@ ament_export_dependencies(${PROJECT_DEPENDENCIES})
 ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME})
 
-# TEMPORAL
-add_executable(gps_translator src/GpsTranslator.cpp ${SOURCE_CPP_FILES})
-ament_target_dependencies(gps_translator ${PROJECT_DEPENDENCIES})
-
-add_executable(${PROJECT_NAME}_main src/main.cpp ${SOURCE_CPP_FILES})
-ament_target_dependencies(${PROJECT_NAME}_main ${PROJECT_DEPENDENCIES})
-
+add_executable(gps_translator_node src/GpsTranslatorNode.cpp src/GpsTranslator.cpp ${SOURCE_CPP_FILES})
+ament_target_dependencies(gps_translator_node ${PROJECT_DEPENDENCIES})
 
 if(BUILD_TESTING)
   find_package(ament_cmake_cppcheck REQUIRED)
@@ -66,10 +61,14 @@ if(BUILD_TESTING)
   ament_clang_format(src/ include/)
 endif()
 
-# install(
-#   DIRECTORY launch
-#   DESTINATION share/${PROJECT_NAME}
-# )
+install(DIRECTORY
+  launch
+  DESTINATION share/${PROJECT_NAME}
+)
+
+install(TARGETS
+  gps_translator_node
+  DESTINATION lib/${PROJECT_NAME})
 
 install(
   DIRECTORY include/
