@@ -13,15 +13,36 @@ GpsTranslator::GpsTranslator(): as2::Node("gps_translator") {
     );
 }
 
-GpsTranslator::GpsTranslator(double lat, double lon, double alt): as2::Node("gps_translator") {
-    GpsTranslator();
+GpsTranslator::GpsTranslator(double lat, double lon, double alt): as2::Node("test") {
     this->utils_.SetOrigin(lat, lon, alt);
+
+    global_fix_sub_ = this->create_subscription<sensor_msgs::msg::NavSatFix>(
+        this->generate_global_name("global_pose/fix"), 10, 
+        std::bind(&GpsTranslator::translateCb, this, std::placeholders::_1)
+    );
+    global_ecef_pub_ = this->create_publisher<geometry_msgs::msg::PoseStamped>(
+        this->generate_global_name("global_pose/ecef"), 10
+    );
+    local_pub_ = this->create_publisher<geometry_msgs::msg::PoseStamped>(
+        this->generate_global_name("local_pose"), 10
+    );
 }
 
 GpsTranslator::GpsTranslator(GpsUtils utils): as2::Node("gps_translator") { 
     double lat, lon, alt;
     utils.GetOrigin(lat, lon, alt);
-    GpsTranslator(lat, lon, alt);
+    this->utils_.SetOrigin(lat, lon, alt);
+
+    global_fix_sub_ = this->create_subscription<sensor_msgs::msg::NavSatFix>(
+        this->generate_global_name("global_pose/fix"), 10, 
+        std::bind(&GpsTranslator::translateCb, this, std::placeholders::_1)
+    );
+    global_ecef_pub_ = this->create_publisher<geometry_msgs::msg::PoseStamped>(
+        this->generate_global_name("global_pose/ecef"), 10
+    );
+    local_pub_ = this->create_publisher<geometry_msgs::msg::PoseStamped>(
+        this->generate_global_name("local_pose"), 10
+    );
 }
 
 void GpsTranslator::translateCb(const sensor_msgs::msg::NavSatFix::SharedPtr msg) {
@@ -40,10 +61,4 @@ void GpsTranslator::translateCb(const sensor_msgs::msg::NavSatFix::SharedPtr msg
     utils_.LatLon2Ecef(*msg, global_msg);
     global_msg.header.stamp = msg->header.stamp;
     global_ecef_pub_->publish(global_msg);
-}
-
-
-
-int main() { 
-    std::cout << "hello" << std::endl;
 }
