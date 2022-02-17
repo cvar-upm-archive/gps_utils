@@ -37,7 +37,7 @@ void GpsUtils::Local2LatLon(geometry_msgs::msg::PoseStamped ps, double &rLat, do
 }
 
 void GpsUtils::SetOrigin(double lat0, double lon0, double h0) {
-    if (!this->isOriginSet) {
+    if (this->isOriginSet) {
         throw OriginAlreadySet();
     }
     this->Reset(lat0, lon0, h0);
