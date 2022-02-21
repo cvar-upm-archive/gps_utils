@@ -45,10 +45,13 @@ void GpsUtils::SetOrigin(double lat0, double lon0, double h0) {
 }
 
 void GpsUtils::SetOrigin(sensor_msgs::msg::NavSatFix fix) {
-    return this->SetOrigin(fix.latitude, fix.longitude, fix.altitude);
+    this->SetOrigin(fix.latitude, fix.longitude, fix.altitude);
 }
 
 void GpsUtils::GetOrigin(double &rLat, double &rLon, double &rH) {
+    if (!this->isOriginSet) {
+        throw OriginNonSet();
+    }
     rLat = this->LatitudeOrigin();
     rLon = this->LongitudeOrigin();
     rH = this->HeightOrigin();
