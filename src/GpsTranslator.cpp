@@ -11,6 +11,13 @@ GpsTranslator::GpsTranslator(): as2::Node("gps_translator") {
     local_pub_ = this->create_publisher<geometry_msgs::msg::PoseStamped>(
         this->generate_global_name("local_pose"), 10
     );
+
+    set_origin_srv_ = this->create_service<as2_msgs::srv::SetOrigin>(
+        this->generate_global_name("set_origin"),
+        std::bind(&GpsTranslator::setOriginCb, this, std::placeholders::_1, std::placeholders::_2));
+    get_origin_srv_ = this->create_service<as2_msgs::srv::GetOrigin>(
+        this->generate_global_name("get_origin"), 
+        std::bind(&GpsTranslator::getOriginCb, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 GpsTranslator::GpsTranslator(double lat, double lon, double alt): as2::Node("test") {
@@ -26,6 +33,13 @@ GpsTranslator::GpsTranslator(double lat, double lon, double alt): as2::Node("tes
     local_pub_ = this->create_publisher<geometry_msgs::msg::PoseStamped>(
         this->generate_global_name("local_pose"), 10
     );
+
+    set_origin_srv_ = this->create_service<as2_msgs::srv::SetOrigin>(
+        this->generate_global_name("set_origin"),
+        std::bind(&GpsTranslator::setOriginCb, this, std::placeholders::_1, std::placeholders::_2));
+    get_origin_srv_ = this->create_service<as2_msgs::srv::GetOrigin>(
+        this->generate_global_name("get_origin"), 
+        std::bind(&GpsTranslator::getOriginCb, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 GpsTranslator::GpsTranslator(GpsUtils utils): as2::Node("gps_translator") { 
@@ -43,6 +57,13 @@ GpsTranslator::GpsTranslator(GpsUtils utils): as2::Node("gps_translator") {
     local_pub_ = this->create_publisher<geometry_msgs::msg::PoseStamped>(
         this->generate_global_name("local_pose"), 10
     );
+
+    set_origin_srv_ = this->create_service<as2_msgs::srv::SetOrigin>(
+        this->generate_global_name("set_origin"),
+        std::bind(&GpsTranslator::setOriginCb, this, std::placeholders::_1, std::placeholders::_2));
+    get_origin_srv_ = this->create_service<as2_msgs::srv::GetOrigin>(
+        this->generate_global_name("get_origin"), 
+        std::bind(&GpsTranslator::getOriginCb, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 void GpsTranslator::translateCb(const sensor_msgs::msg::NavSatFix::SharedPtr msg) {
@@ -61,4 +82,28 @@ void GpsTranslator::translateCb(const sensor_msgs::msg::NavSatFix::SharedPtr msg
     utils_.LatLon2Ecef(*msg, global_msg);
     global_msg.header.stamp = msg->header.stamp;
     global_ecef_pub_->publish(global_msg);
+}
+
+void GpsTranslator::setOriginCb(const std::shared_ptr<as2_msgs::srv::SetOrigin::Request> request, 
+                                std::shared_ptr<as2_msgs::srv::SetOrigin::Response> response) {
+    try {
+        utils_.SetOrigin(request->origin.latitude, request->origin.longitude, request->origin.altitude);
+        response->success = true;
+    } catch (std::exception &e) {
+        RCLCPP_WARN(this->get_logger(), "Origin already set.");
+        response->success = false;
+    }
+}
+
+void GpsTranslator::getOriginCb(const std::shared_ptr<as2_msgs::srv::GetOrigin::Request> request, 
+                                std::shared_ptr<as2_msgs::srv::GetOrigin::Response> response) {
+    try {
+        geographic_msgs::msg::GeoPoint geo_point;
+        utils_.GetOrigin(geo_point.latitude, geo_point.longitude, geo_point.altitude);
+        response->origin = geo_point;
+        response->success = true;
+    } catch (std::exception &e) {
+        RCLCPP_WARN(this->get_logger(), "Unable to get origin since it's not set.");
+        response->success = false;
+    }   
 }

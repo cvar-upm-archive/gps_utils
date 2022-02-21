@@ -6,7 +6,7 @@
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
-  auto node = std::make_shared<GpsTranslator>(40.439445668976475, -3.6881887589114646, 0);
+  auto node = std::make_shared<GpsTranslator>();
   //TODO: check if freq is needed
   as2::spinLoop(node);
 

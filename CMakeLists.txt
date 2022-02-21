@@ -18,6 +18,7 @@ set(PROJECT_DEPENDENCIES
   sensor_msgs
   geometry_msgs
   GeographicLib
+  geographic_msgs
 )
 
 foreach(DEPENDENCY ${PROJECT_DEPENDENCIES})
@@ -25,9 +26,6 @@ foreach(DEPENDENCY ${PROJECT_DEPENDENCIES})
 endforeach()
 
 
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
 set(SOURCE_CPP_FILES 
   src/GpsUtils.cpp
 )
