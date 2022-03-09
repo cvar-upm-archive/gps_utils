@@ -14,6 +14,7 @@
   <depend>geometry_msgs</depend>
   <depend>GeographicLib</depend>
   <depend>geographic_msgs</depend>
+  <depend>as2_msgs</depend>
 
   <exec_depend>ros2launch</exec_depend>
 
