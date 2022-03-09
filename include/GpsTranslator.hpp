@@ -9,7 +9,9 @@
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "as2_msgs/srv/set_origin.hpp"
 #include "as2_msgs/srv/get_origin.hpp"
-#include "geographic_msgs/msg/geo_point.hpp"
+#include "as2_msgs/srv/geopath_to_path.hpp"
+#include "as2_msgs/srv/path_to_geopath.hpp"
+#include "geographic_msgs/msg/geo_pose_stamped.hpp"
 
 
 class GpsTranslator : public as2::Node {
@@ -27,10 +29,18 @@ private:
     rclcpp::Service<as2_msgs::srv::SetOrigin>::SharedPtr set_origin_srv_;
     rclcpp::Service<as2_msgs::srv::GetOrigin>::SharedPtr get_origin_srv_;
 
+    rclcpp::Service<as2_msgs::srv::GeopathToPath>::SharedPtr geopath_to_path_srv_;
+    rclcpp::Service<as2_msgs::srv::PathToGeopath>::SharedPtr path_to_geopath_srv_;
+
 private:
     void translateCb(const sensor_msgs::msg::NavSatFix::SharedPtr msg);
     void setOriginCb(const std::shared_ptr<as2_msgs::srv::SetOrigin::Request> request, 
                      std::shared_ptr<as2_msgs::srv::SetOrigin::Response> response);
     void getOriginCb(const std::shared_ptr<as2_msgs::srv::GetOrigin::Request> request, 
                      std::shared_ptr<as2_msgs::srv::GetOrigin::Response> response);
+
+    void geopathToPathCb(const std::shared_ptr<as2_msgs::srv::GeopathToPath::Request> request, 
+                     std::shared_ptr<as2_msgs::srv::GeopathToPath::Response> response);
+    void pathToGeopathCb(const std::shared_ptr<as2_msgs::srv::PathToGeopath::Request> request, 
+                     std::shared_ptr<as2_msgs::srv::PathToGeopath::Response> response);
 }; // GpsTranslator class

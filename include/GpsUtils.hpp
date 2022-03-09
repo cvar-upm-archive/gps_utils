@@ -14,6 +14,7 @@
 #include <GeographicLib/LocalCartesian.hpp>
 #include "sensor_msgs/msg/nav_sat_fix.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
+#include "geographic_msgs/msg/geo_pose_stamped.hpp"
 
 const static GeographicLib::Geocentric &earth = GeographicLib::Geocentric::WGS84();
 const static std::string globalFrame = "earth";  // wgs84 --> ROS REP105 Name Convention
@@ -27,26 +28,40 @@ public:
     GpsUtils(): GeographicLib::LocalCartesian(earth) {};
     GpsUtils(double lat0, double lon0, double h0 = 0): GeographicLib::LocalCartesian(lat0, lon0, h0, earth) { this->isOriginSet = true; };
 
-    // Geodesic Lat Lon to Local Cartesian 
-    void LatLon2Local(double lat, double lon, double h, double &rX, double &rY, double &rZ);
-    void LatLon2Local(sensor_msgs::msg::NavSatFix fix, double &rX, double &rY, double &rZ);
-    void LatLon2Local(double lat, double lon, double h, geometry_msgs::msg::PoseStamped &ps);
-    void LatLon2Local(sensor_msgs::msg::NavSatFix fix, geometry_msgs::msg::PoseStamped &ps);
-    void Local2LatLon(double x, double y, double z, double &rLat, double &rLon, double &rH);
-    void Local2LatLon(geometry_msgs::msg::PoseStamped ps, double &rLat, double &rLon, double &rH);
-
     // Origin 
     void SetOrigin(double lat0, double lon0, double h0 = 0);
     void SetOrigin(sensor_msgs::msg::NavSatFix fix);
+    void SetOrigin(geographic_msgs::msg::GeoPoseStamped gps);
     void GetOrigin(double &rLat, double &rLon, double &rH);
+    void GetOrigin(geographic_msgs::msg::GeoPoseStamped &gps);
+
+    // Geodesic Lat Lon to Local Cartesian 
+    void LatLon2Local(double lat, double lon, double h, double &rX, double &rY, double &rZ);
+    void LatLon2Local(sensor_msgs::msg::NavSatFix fix, double &rX, double &rY, double &rZ);
+    void LatLon2Local(geographic_msgs::msg::GeoPoseStamped gps, double &rX, double &rY, double &rZ);
+    void LatLon2Local(double lat, double lon, double h, geometry_msgs::msg::PoseStamped &ps);
+    void LatLon2Local(sensor_msgs::msg::NavSatFix fix, geometry_msgs::msg::PoseStamped &ps);
+    void LatLon2Local(geographic_msgs::msg::GeoPoseStamped gps, geometry_msgs::msg::PoseStamped &ps);
+
+    // Local cartesian to Geodesic Lat Lon
+    void Local2LatLon(double x, double y, double z, double &rLat, double &rLon, double &rH);
+    void Local2LatLon(double x, double y, double z, geographic_msgs::msg::GeoPoseStamped &gps);
+    void Local2LatLon(geometry_msgs::msg::PoseStamped ps, double &rLat, double &rLon, double &rH);
+    void Local2LatLon(geometry_msgs::msg::PoseStamped ps, geographic_msgs::msg::GeoPoseStamped &gps);
 
     // Geodesic Lat Lon to Earth-Centered-Earth-Fixed
     static void LatLon2Ecef(double lat, double lon, double h, double &rX, double &rY, double &rZ);
     static void LatLon2Ecef(sensor_msgs::msg::NavSatFix fix, double &rX, double &rY, double &rZ);
+    static void LatLon2Ecef(geographic_msgs::msg::GeoPoseStamped gps, double &rX, double &rY, double &rZ);
     static void LatLon2Ecef(double lat, double lon, double h, geometry_msgs::msg::PoseStamped &ps);
     static void LatLon2Ecef(sensor_msgs::msg::NavSatFix fix, geometry_msgs::msg::PoseStamped &ps);
+    static void LatLon2Ecef(geographic_msgs::msg::GeoPoseStamped gps, geometry_msgs::msg::PoseStamped &ps);
+
+    // Earth-Centered-Earth-Fixed to Geodesic Lat Lon
     static void Ecef2LatLon(double x, double y, double z, double &rLat, double &rLon, double &rH);
+    static void Ecef2LatLon(double x, double y, double z, geographic_msgs::msg::GeoPoseStamped &gps);
     static void Ecef2LatLon(geometry_msgs::msg::PoseStamped ps, double &rLat, double &rLon, double &rH);
+    static void Ecef2LatLon(geometry_msgs::msg::PoseStamped ps, geographic_msgs::msg::GeoPoseStamped &gps);
 };  // GpsUtils
 
 class OriginNonSet : public std::runtime_error
