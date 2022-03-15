@@ -15,6 +15,7 @@ set(PROJECT_DEPENDENCIES
   ament_cmake
   rclcpp
   as2_core
+  as2_msgs
   sensor_msgs
   geometry_msgs
   GeographicLib
