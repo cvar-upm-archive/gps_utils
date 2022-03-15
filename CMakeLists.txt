@@ -14,6 +14,7 @@ endif()
 set(PROJECT_DEPENDENCIES
   ament_cmake
   rclcpp
+  rclcpp_components
   as2_core
   as2_msgs
   sensor_msgs
@@ -52,6 +53,11 @@ ament_export_libraries(${PROJECT_NAME})
 add_executable(gps_translator_node src/GpsTranslatorNode.cpp src/GpsTranslator.cpp ${SOURCE_CPP_FILES})
 ament_target_dependencies(gps_translator_node ${PROJECT_DEPENDENCIES})
 
+add_library(gps_translator SHARED
+   src/GpsTranslator.cpp)
+ament_target_dependencies(gps_translator ${PROJECT_DEPENDENCIES})
+rclcpp_components_register_nodes(gps_translator "GpsTranslator::GpsTranslator")
+
 if(BUILD_TESTING)
   find_package(ament_cmake_cppcheck REQUIRED)
   find_package(ament_cmake_clang_format REQUIRED)
@@ -76,6 +82,7 @@ install(
 
 install(TARGETS
   ${PROJECT_NAME}
+  gps_translator
   EXPORT export_${PROJECT_NAME}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib

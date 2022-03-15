@@ -12,11 +12,13 @@
 #include "as2_msgs/srv/geopath_to_path.hpp"
 #include "as2_msgs/srv/path_to_geopath.hpp"
 #include "geographic_msgs/msg/geo_pose_stamped.hpp"
+#include <rclcpp/node_options.hpp>
 
+namespace GpsTranslator {
 
 class GpsTranslator : public as2::Node {
 public:
-    GpsTranslator();
+    GpsTranslator(const rclcpp::NodeOptions & options);
     GpsTranslator(GpsUtils utils);
     GpsTranslator(double lat, double lon, double alt);
 private:
@@ -44,3 +46,5 @@ private:
     void pathToGeopathCb(const std::shared_ptr<as2_msgs::srv::PathToGeopath::Request> request, 
                      std::shared_ptr<as2_msgs::srv::PathToGeopath::Response> response);
 }; // GpsTranslator class
+
+} // namespace GpsTranslator

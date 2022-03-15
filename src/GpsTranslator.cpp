@@ -1,6 +1,6 @@
 #include "GpsTranslator.hpp"
 
-GpsTranslator::GpsTranslator(): as2::Node("gps_translator") {
+GpsTranslator::GpsTranslator::GpsTranslator(const rclcpp::NodeOptions & options): as2::Node("gps_translator", options) {
     global_fix_sub_ = this->create_subscription<sensor_msgs::msg::NavSatFix>(
         this->generate_global_name("global_pose/fix"), 10, 
         std::bind(&GpsTranslator::translateCb, this, std::placeholders::_1)
@@ -27,7 +27,7 @@ GpsTranslator::GpsTranslator(): as2::Node("gps_translator") {
         std::bind(&GpsTranslator::pathToGeopathCb, this, std::placeholders::_1, std::placeholders::_2));
 }
 
-GpsTranslator::GpsTranslator(double lat, double lon, double alt): as2::Node("gps_translator") {
+GpsTranslator::GpsTranslator::GpsTranslator(double lat, double lon, double alt): as2::Node("gps_translator") {
     this->utils_.SetOrigin(lat, lon, alt);
 
     global_fix_sub_ = this->create_subscription<sensor_msgs::msg::NavSatFix>(
@@ -56,7 +56,7 @@ GpsTranslator::GpsTranslator(double lat, double lon, double alt): as2::Node("gps
         std::bind(&GpsTranslator::pathToGeopathCb, this, std::placeholders::_1, std::placeholders::_2));
 }
 
-GpsTranslator::GpsTranslator(GpsUtils utils): as2::Node("gps_translator") { 
+GpsTranslator::GpsTranslator::GpsTranslator(GpsUtils utils): as2::Node("gps_translator") { 
     double lat, lon, alt;
     utils.GetOrigin(lat, lon, alt);
     this->utils_.SetOrigin(lat, lon, alt);
@@ -87,7 +87,7 @@ GpsTranslator::GpsTranslator(GpsUtils utils): as2::Node("gps_translator") {
         std::bind(&GpsTranslator::pathToGeopathCb, this, std::placeholders::_1, std::placeholders::_2));
 }
 
-void GpsTranslator::translateCb(const sensor_msgs::msg::NavSatFix::SharedPtr msg) {
+void GpsTranslator::GpsTranslator::translateCb(const sensor_msgs::msg::NavSatFix::SharedPtr msg) {
     geometry_msgs::msg::PoseStamped local_msg;
     geometry_msgs::msg::PoseStamped global_msg;
 
@@ -105,7 +105,7 @@ void GpsTranslator::translateCb(const sensor_msgs::msg::NavSatFix::SharedPtr msg
     global_ecef_pub_->publish(global_msg);
 }
 
-void GpsTranslator::setOriginCb(const std::shared_ptr<as2_msgs::srv::SetOrigin::Request> request, 
+void GpsTranslator::GpsTranslator::setOriginCb(const std::shared_ptr<as2_msgs::srv::SetOrigin::Request> request, 
                                 std::shared_ptr<as2_msgs::srv::SetOrigin::Response> response) {
     try {
         utils_.SetOrigin(request->origin.latitude, request->origin.longitude, request->origin.altitude);
@@ -120,7 +120,7 @@ void GpsTranslator::setOriginCb(const std::shared_ptr<as2_msgs::srv::SetOrigin::
     }
 }
 
-void GpsTranslator::getOriginCb(const std::shared_ptr<as2_msgs::srv::GetOrigin::Request> request, 
+void GpsTranslator::GpsTranslator::getOriginCb(const std::shared_ptr<as2_msgs::srv::GetOrigin::Request> request, 
                                 std::shared_ptr<as2_msgs::srv::GetOrigin::Response> response) {
     try {
         geographic_msgs::msg::GeoPoint geo_point;
@@ -133,7 +133,7 @@ void GpsTranslator::getOriginCb(const std::shared_ptr<as2_msgs::srv::GetOrigin::
     }   
 }
 
-void GpsTranslator::geopathToPathCb(const std::shared_ptr<as2_msgs::srv::GeopathToPath::Request> request, 
+void GpsTranslator::GpsTranslator::geopathToPathCb(const std::shared_ptr<as2_msgs::srv::GeopathToPath::Request> request, 
                                 std::shared_ptr<as2_msgs::srv::GeopathToPath::Response> response) {
     try {
         response->path.header = request->geo_path.header;
@@ -149,7 +149,7 @@ void GpsTranslator::geopathToPathCb(const std::shared_ptr<as2_msgs::srv::Geopath
     }
 }
 
-void GpsTranslator::pathToGeopathCb(const std::shared_ptr<as2_msgs::srv::PathToGeopath::Request> request, 
+void GpsTranslator::GpsTranslator::pathToGeopathCb(const std::shared_ptr<as2_msgs::srv::PathToGeopath::Request> request, 
                                 std::shared_ptr<as2_msgs::srv::PathToGeopath::Response> response) {
     try {
         response->geo_path.header = request->path.header;
@@ -164,3 +164,11 @@ void GpsTranslator::pathToGeopathCb(const std::shared_ptr<as2_msgs::srv::PathToG
         response->success = false;
     }
 }
+
+// COMPONENT
+#include "rclcpp_components/register_node_macro.hpp"
+
+// Register the component with class_loader.
+// This acts as a sort of entry point, allowing the component to be discoverable when its library
+// is being loaded into a running process.
+RCLCPP_COMPONENTS_REGISTER_NODE(GpsTranslator::GpsTranslator)
