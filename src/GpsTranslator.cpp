@@ -113,7 +113,7 @@ void GpsTranslator::setOriginCb(const std::shared_ptr<as2_msgs::srv::SetOrigin::
         std::string info = "New origin: [ " + std::to_string(request->origin.latitude) + ", " 
                                             + std::to_string(request->origin.longitude) + ", " 
                                             + std::to_string(request->origin.altitude) + " ]";
-        RCLCPP_INFO(this->get_logger(), info);
+        RCLCPP_INFO(this->get_logger(), "%s", info.c_str());
     } catch (std::exception &e) {
         RCLCPP_WARN(this->get_logger(), "Origin already set.");
         response->success = false;
