@@ -22,6 +22,10 @@ public:
 private:
     GpsUtils utils_;
 
+    std::string global_fix_sub_name_;
+    std::string global_ecef_pub_name_;
+    std::string local_pub_name_;
+
     rclcpp::Subscription<sensor_msgs::msg::NavSatFix>::SharedPtr global_fix_sub_;
     rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr global_ecef_pub_;
     rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr local_pub_;
@@ -33,6 +37,8 @@ private:
     rclcpp::Service<as2_msgs::srv::PathToGeopath>::SharedPtr path_to_geopath_srv_;
 
 private:
+    void on_configure();
+
     void translateCb(const sensor_msgs::msg::NavSatFix::SharedPtr msg);
     void setOriginCb(const std::shared_ptr<as2_msgs::srv::SetOrigin::Request> request, 
                      std::shared_ptr<as2_msgs::srv::SetOrigin::Response> response);

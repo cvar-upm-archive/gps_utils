@@ -1,59 +1,13 @@
 #include "GpsTranslator.hpp"
 
 GpsTranslator::GpsTranslator(): as2::Node("gps_translator") {
-    global_fix_sub_ = this->create_subscription<sensor_msgs::msg::NavSatFix>(
-        this->generate_global_name("global_pose/fix"), 10, 
-        std::bind(&GpsTranslator::translateCb, this, std::placeholders::_1)
-    );
-    global_ecef_pub_ = this->create_publisher<geometry_msgs::msg::PoseStamped>(
-        this->generate_global_name("global_pose/ecef"), 10
-    );
-    local_pub_ = this->create_publisher<geometry_msgs::msg::PoseStamped>(
-        this->generate_global_name("local_pose"), 10
-    );
-
-    set_origin_srv_ = this->create_service<as2_msgs::srv::SetOrigin>(
-        this->generate_global_name("set_origin"),
-        std::bind(&GpsTranslator::setOriginCb, this, std::placeholders::_1, std::placeholders::_2));
-    get_origin_srv_ = this->create_service<as2_msgs::srv::GetOrigin>(
-        this->generate_global_name("get_origin"), 
-        std::bind(&GpsTranslator::getOriginCb, this, std::placeholders::_1, std::placeholders::_2));
-
-    geopath_to_path_srv_ = this->create_service<as2_msgs::srv::GeopathToPath>(
-        this->generate_global_name("geopath_to_path"),
-        std::bind(&GpsTranslator::geopathToPathCb, this, std::placeholders::_1, std::placeholders::_2));
-    path_to_geopath_srv_ = this->create_service<as2_msgs::srv::PathToGeopath>(
-        this->generate_global_name("path_to_geopath"),
-        std::bind(&GpsTranslator::pathToGeopathCb, this, std::placeholders::_1, std::placeholders::_2));
+    on_configure();
 }
 
 GpsTranslator::GpsTranslator(double lat, double lon, double alt): as2::Node("gps_translator") {
     this->utils_.SetOrigin(lat, lon, alt);
 
-    global_fix_sub_ = this->create_subscription<sensor_msgs::msg::NavSatFix>(
-        this->generate_global_name("global_pose/fix"), 10, 
-        std::bind(&GpsTranslator::translateCb, this, std::placeholders::_1)
-    );
-    global_ecef_pub_ = this->create_publisher<geometry_msgs::msg::PoseStamped>(
-        this->generate_global_name("global_pose/ecef"), 10
-    );
-    local_pub_ = this->create_publisher<geometry_msgs::msg::PoseStamped>(
-        this->generate_global_name("local_pose"), 10
-    );
-
-    set_origin_srv_ = this->create_service<as2_msgs::srv::SetOrigin>(
-        this->generate_global_name("set_origin"),
-        std::bind(&GpsTranslator::setOriginCb, this, std::placeholders::_1, std::placeholders::_2));
-    get_origin_srv_ = this->create_service<as2_msgs::srv::GetOrigin>(
-        this->generate_global_name("get_origin"), 
-        std::bind(&GpsTranslator::getOriginCb, this, std::placeholders::_1, std::placeholders::_2));
-
-    geopath_to_path_srv_ = this->create_service<as2_msgs::srv::GeopathToPath>(
-        this->generate_global_name("geopath_to_path"),
-        std::bind(&GpsTranslator::geopathToPathCb, this, std::placeholders::_1, std::placeholders::_2));
-    path_to_geopath_srv_ = this->create_service<as2_msgs::srv::PathToGeopath>(
-        this->generate_global_name("path_to_geopath"),
-        std::bind(&GpsTranslator::pathToGeopathCb, this, std::placeholders::_1, std::placeholders::_2));
+    on_configure();
 }
 
 GpsTranslator::GpsTranslator(GpsUtils utils): as2::Node("gps_translator") { 
@@ -61,15 +15,28 @@ GpsTranslator::GpsTranslator(GpsUtils utils): as2::Node("gps_translator") {
     utils.GetOrigin(lat, lon, alt);
     this->utils_.SetOrigin(lat, lon, alt);
 
+    on_configure();
+}
+
+void GpsTranslator::on_configure()
+{
+    this->declare_parameter<std::string>("global_fix_sub_name");
+    this->declare_parameter<std::string>("global_ecef_pub");
+    this->declare_parameter<std::string>("local_pub_name");
+    
+    global_fix_sub_name_ = this->get_parameter("global_fix_sub_name").as_string();
+    global_ecef_pub_name_ = this->get_parameter("global_ecef_pub").as_string();
+    local_pub_name_ = this->get_parameter("local_pub_name").as_string();
+
     global_fix_sub_ = this->create_subscription<sensor_msgs::msg::NavSatFix>(
-        this->generate_global_name("global_pose/fix"), 10, 
+        this->generate_global_name(global_fix_sub_name_), 10, 
         std::bind(&GpsTranslator::translateCb, this, std::placeholders::_1)
     );
     global_ecef_pub_ = this->create_publisher<geometry_msgs::msg::PoseStamped>(
-        this->generate_global_name("global_pose/ecef"), 10
+        this->generate_global_name(global_ecef_pub_name_), 10
     );
     local_pub_ = this->create_publisher<geometry_msgs::msg::PoseStamped>(
-        this->generate_global_name("local_pose"), 10
+        this->generate_global_name(local_pub_name_), 10
     );
 
     set_origin_srv_ = this->create_service<as2_msgs::srv::SetOrigin>(
