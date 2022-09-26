@@ -1,4 +1,4 @@
 sudo apt update
-sudo apt install geographiclib-tools
-sudo apt install libgeographic-dev
+sudo apt install geographiclib-tools -y 
+sudo apt install libgeographic-dev -y
 
