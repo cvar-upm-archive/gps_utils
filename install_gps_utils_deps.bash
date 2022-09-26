@@ -1,4 +1,6 @@
 sudo apt update
-sudo apt install geographiclib-tools -y 
-sudo apt install libgeographic-dev -y
+# Install GeographicLib
+sudo apt install libgeographic-dev geographiclib-tools -y &&\
+sudo ln -s /usr/share/cmake/geographiclib/FindGeographicLib.cmake /usr/share/cmake-*/Modules/ &&\
+
 
